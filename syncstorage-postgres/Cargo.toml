@@ -1,5 +1,5 @@
 [package]
-name = "tokenserver-db"
+name = "syncstorage-postgres"
 version.workspace = true
 license.workspace = true
 authors.workspace = true
@@ -7,26 +7,24 @@ edition.workspace = true
 
 [dependencies]
 backtrace.workspace = true
+base64.workspace = true
 futures.workspace = true
 http.workspace = true
-serde.workspace = true
-serde_derive.workspace = true
-serde_json.workspace = true
 slog-scope.workspace = true
 thiserror.workspace = true
 
 async-trait = "0.1.40"
-# diesel 1.4
-diesel = { workspace = true, features = ["postgres", "mysql", "r2d2"] }
+# There appears to be a compilation error with diesel
+diesel = { workspace = true, features = ["postgres", "r2d2"] }
 diesel_logger = { workspace = true }
-diesel_migrations = { workspace = true, features = ["postgres", "mysql"] }
+diesel_migrations = { workspace = true, features = ["postgres"] }
 syncserver-common = { path = "../syncserver-common" }
 syncserver-db-common = { path = "../syncserver-db-common" }
-tokenserver-common = { path = "../tokenserver-common" }
-tokenserver-settings = { path = "../tokenserver-settings" }
-tokio = { workspace = true, features = ["macros", "sync"] }
+syncstorage-db-common = { path = "../syncstorage-db-common" }
+syncstorage-settings = { path = "../syncstorage-settings" }
+url = "2.1"
+dotenvy = "0.15"
 
 [dev-dependencies]
 env_logger.workspace = true
-
 syncserver-settings = { path = "../syncserver-settings" }

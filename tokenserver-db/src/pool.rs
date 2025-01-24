@@ -2,7 +2,7 @@ use std::{sync::Arc, time::Duration};
 
 use async_trait::async_trait;
 use diesel::{
-    mysql::MysqlConnection,
+    pg::PgConnection,
     r2d2::{ConnectionManager, Pool},
     Connection,
 };
@@ -24,8 +24,9 @@ embed_migrations!();
 ///
 /// Mysql DDL statements implicitly commit which could disrupt MysqlPool's
 /// begin_test_transaction during tests. So this runs on its own separate conn.
+// TODO: conditional on type instead of only pg
 fn run_embedded_migrations(database_url: &str) -> DbResult<()> {
-    let conn = MysqlConnection::establish(database_url)?;
+    let conn = PgConnection::establish(database_url)?;
 
     embedded_migrations::run(&LoggingConnection::new(conn))?;
 
@@ -35,7 +36,7 @@ fn run_embedded_migrations(database_url: &str) -> DbResult<()> {
 #[derive(Clone)]
 pub struct TokenserverPool {
     /// Pool of db connections
-    inner: Pool<ConnectionManager<MysqlConnection>>,
+    inner: Pool<ConnectionManager<PgConnection>>,
     metrics: Metrics,
     // This field is public so the service ID can be set after the pool is created
     pub service_id: Option<i32>,
@@ -55,7 +56,7 @@ impl TokenserverPool {
             run_embedded_migrations(&settings.database_url)?;
         }
 
-        let manager = ConnectionManager::<MysqlConnection>::new(settings.database_url.clone());
+        let manager = ConnectionManager::<PgConnection>::new(settings.database_url.clone());
         let builder = Pool::builder()
             .max_size(settings.database_pool_max_size)
             .connection_timeout(Duration::from_secs(

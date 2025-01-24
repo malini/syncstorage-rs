@@ -8,6 +8,13 @@ pub mod mock;
 #[cfg(test)]
 mod tests;
 
+#[cfg(feature = "postgres")]
+pub type DbPoolImpl = syncstorage_postgres::PgDbPool;
+#[cfg(feature = "postgres")]
+pub use syncstorage_postgres::DbError;
+#[cfg(feature = "postgres")]
+pub type DbImpl = syncstorage_postgres::PgDb;
+
 #[cfg(feature = "mysql")]
 pub type DbPoolImpl = syncstorage_mysql::MysqlDbPool;
 #[cfg(feature = "mysql")]
@@ -31,8 +38,8 @@ pub use syncstorage_db_common::{
     Db, DbPool, Sorting, UserIdentifier,
 };
 
-#[cfg(all(feature = "mysql", feature = "spanner"))]
-compile_error!("only one of the \"mysql\" and \"spanner\" features can be enabled at a time");
+#[cfg(all(feature = "postgres", feature = "mysql", feature = "spanner"))]
+compile_error!("only one of the \"postgres\", \"mysql\" and \"spanner\" features can be enabled at a time");
 
-#[cfg(not(any(feature = "mysql", feature = "spanner")))]
-compile_error!("exactly one of the \"mysql\" and \"spanner\" features must be enabled");
+#[cfg(not(any(feature = "postgres", feature = "mysql", feature = "spanner")))]
+compile_error!("exactly one of the \"postgres\", \"mysql\" and \"spanner\" features must be enabled");

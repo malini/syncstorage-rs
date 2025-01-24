@@ -1,5 +1,5 @@
 use diesel::{
-    mysql::MysqlConnection,
+    pg::PgConnection,
     r2d2::{ConnectionManager, PooledConnection},
     sql_types::{Bigint, Float, Integer, Nullable, Text},
     OptionalExtension, RunQueryDsl,
@@ -24,14 +24,14 @@ use super::{
 /// "retired" from the db.
 const MAX_GENERATION: i64 = i64::MAX;
 
-type Conn = PooledConnection<ConnectionManager<MysqlConnection>>;
+type Conn = PooledConnection<ConnectionManager<PgConnection>>;
 
 #[derive(Clone)]
 pub struct TokenserverDb {
     /// Synchronous Diesel calls are executed on a blocking threadpool to satisfy
     /// the Db trait's asynchronous interface.
     ///
-    /// Arc<MysqlDbInner> provides a Clone impl utilized for safely moving to
+    /// Arc<PgDbInner> provides a Clone impl utilized for safely moving to
     /// the thread pool but does not provide Send as the underlying db
     /// conn. structs are !Sync (Arc requires both for Send). See the Send impl
     /// below.
@@ -43,8 +43,8 @@ pub struct TokenserverDb {
     pub timeout: Option<Duration>,
 }
 
-/// Despite the db conn structs being !Sync (see Arc<MysqlDbInner> above) we
-/// don't spawn multiple MysqlDb calls at a time in the thread pool. Calls are
+/// Despite the db conn structs being !Sync (see Arc<PgDbInner> above) we
+/// don't spawn multiple PgDb calls at a time in the thread pool. Calls are
 /// queued to the thread pool via Futures, naturally serialized.
 unsafe impl Send for TokenserverDb {}
 

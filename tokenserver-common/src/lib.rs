@@ -6,6 +6,8 @@ pub use error::{ErrorLocation, TokenType, TokenserverError};
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub enum NodeType {
+    #[serde(rename = "postgres")]
+    Pg,
     #[serde(rename = "mysql")]
     MySql,
     #[serde(rename = "spanner")]

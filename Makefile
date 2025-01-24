@@ -47,6 +47,14 @@ python:
 	python3 -m venv venv
 	venv/bin/python -m pip install -r requirements.txt
 
+run_postgres: python
+	PATH="./venv/bin:$(PATH)" \
+		# See https://github.com/PyO3/pyo3/issues/1741 for discussion re: why we need to set the
+		# below env var
+		PYTHONPATH=$(PYTHON_SITE_PACKGES) \
+	        RUST_LOG=debug \
+		RUST_BACKTRACE=full \
+		cargo run --no-default-features --features=syncstorage-db/postgres --features=py_verifier -- --config config/local.toml
 
 run_mysql: python
 	PATH="./venv/bin:$(PATH)" \

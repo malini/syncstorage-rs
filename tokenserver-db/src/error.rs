@@ -57,6 +57,7 @@ enum DbErrorKind {
     Internal(String),
 }
 
+//TODO: add a catch for postgres
 impl From<DbErrorKind> for DbError {
     fn from(kind: DbErrorKind) -> Self {
         match kind {
