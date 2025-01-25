@@ -329,8 +329,9 @@ impl PgDb {
 
         // Oof:https://docs.diesel.rs/2.2.x/diesel/fn.insert_or_ignore_into.html this only works for mysql, we'll need a different route for pg
         let id = self.conn.transaction(|| {
-            diesel::insert_or_ignore_into(collections::table)
+            diesel::insert_into(collections::table)
                 .values(collections::name.eq(name))
+                .on_conflict_do_nothing()
                 .execute(&self.conn)?;
 
             collections::table
