@@ -80,11 +80,13 @@ impl PgDbPool {
             .min_idle(settings.database_pool_min_idle);
 
         #[cfg(debug_assertions)]
+        /*
         let builder = if settings.database_use_test_transactions {
             builder.connection_customizer(Box::new(TestTransactionCustomizer))
         } else {
             builder
         };
+        */
 
         Ok(Self {
             pool: builder.build(manager)?,
